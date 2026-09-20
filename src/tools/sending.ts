@@ -22,7 +22,7 @@ export const SENDING_TOOLS: Tool[] = [
     },
   },
   {
-    name: 'customerthermometer_get_send_quota',
+    name: 'customerthermometer_get_credits',
     description: 'Get the number of remaining Thermometer send credits on the account.',
     inputSchema: { type: 'object', properties: {} },
   },
@@ -53,7 +53,7 @@ export async function handleSendingTool(name: string, args: Record<string, unkno
       return textResult(result);
     }
 
-    if (name === 'customerthermometer_get_send_quota') {
+    if (name === 'customerthermometer_get_credits') {
       return textResult(await getSendQuota(creds!));
     }
 

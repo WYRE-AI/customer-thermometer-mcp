@@ -28,7 +28,7 @@ Customer Thermometer authenticates with a single static API key, generated from 
 
 ### Sending
 - `customerthermometer_send_email` - send a single Email Thermometer survey to one recipient.
-- `customerthermometer_get_send_quota` - remaining Thermometer send credits on the account.
+- `customerthermometer_get_credits` - remaining Thermometer send credits on the account.
 
 ### Reporting
 - `customerthermometer_get_nps_value` - Net Promoter Score, optionally filtered by blast/date range.

@@ -48,11 +48,11 @@ describe('handleSendingTool', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('customerthermometer_get_send_quota parses the integer response', async () => {
+  it('customerthermometer_get_credits parses the integer response', async () => {
     const creds = { apiKey: 'key-quota-1' };
     fetchMock.mockResolvedValueOnce(textResponse('357'));
 
-    const result = await runWithCredentials(creds, () => handleSendingTool('customerthermometer_get_send_quota', {}));
+    const result = await runWithCredentials(creds, () => handleSendingTool('customerthermometer_get_credits', {}));
 
     expect(result.isError).toBeUndefined();
     expect(textOf(result)).toBe('357');
@@ -65,7 +65,7 @@ describe('handleSendingTool', () => {
     const creds = { apiKey: 'key-quota-2' };
     fetchMock.mockResolvedValueOnce(textResponse('Invalid API Key'));
 
-    const result = await runWithCredentials(creds, () => handleSendingTool('customerthermometer_get_send_quota', {}));
+    const result = await runWithCredentials(creds, () => handleSendingTool('customerthermometer_get_credits', {}));
 
     expect(result.isError).toBe(true);
   });
