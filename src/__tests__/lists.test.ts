@@ -58,4 +58,19 @@ describe('handleListTool', () => {
     expect(result.isError).toBe(true);
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  it('treats a plain-text error body (HTTP 200, e.g. an invalid API key) as an error rather than silently returning empty XML data', async () => {
+    // fast-xml-parser does not throw on non-XML plain text -- it silently
+    // parses to `{}`. A genuinely empty XML result set always has at least
+    // one top-level key (e.g. an empty <Thermometers/> root), so a
+    // zero-key parse on non-empty input is the discriminator, verified
+    // directly against fast-xml-parser rather than assumed.
+    const creds = { apiKey: 'key-bad' };
+    fetchMock.mockResolvedValueOnce(textResponse('Invalid API key'));
+
+    const result = await runWithCredentials(creds, () => handleListTool('customerthermometer_get_thermometers', {}));
+
+    expect(result.isError).toBe(true);
+    expect(textOf(result)).toContain('Invalid API key');
+  });
 });

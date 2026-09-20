@@ -41,13 +41,29 @@ const xmlParser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: 
  * this deliberately parses generically rather than asserting a shape the
  * live API might not match, and passes the result straight through to the
  * caller.
+ *
+ * The vendor returns plain-text error messages (e.g. an invalid API key) in
+ * the same body slot as success data, same as the Integer endpoints below —
+ * but fast-xml-parser does NOT throw on non-XML plain text, it silently
+ * returns `{}` (verified: "Invalid API key" -> {}, "" -> {}, whitespace ->
+ * {}). Any genuinely valid XML response, including an empty result set,
+ * always yields at least one top-level key (verified: even a bare empty
+ * root element like `<thermometers/>` parses to {thermometers: ""}). So a
+ * zero-key parse result on non-empty input is a reliable signal that the
+ * body was a plain-text error, not real (possibly empty) XML data — without
+ * needing to know the vendor's exact error-message wording.
  */
 function parseXml(text: string): UntypedXmlResponse {
+  let parsed: UntypedXmlResponse;
   try {
-    return xmlParser.parse(text) as UntypedXmlResponse;
+    parsed = xmlParser.parse(text) as UntypedXmlResponse;
   } catch (err) {
     throw new CustomerThermometerApiError(`Failed to parse XML response: ${(err as Error).message}`);
   }
+  if (Object.keys(parsed as Record<string, unknown>).length === 0 && text.trim().length > 0) {
+    throw new CustomerThermometerApiError(`Expected an XML response, got: ${text.trim()}`);
+  }
+  return parsed;
 }
 
 /**
