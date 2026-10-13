@@ -45,7 +45,11 @@ ENV NODE_ENV=production
 ENV LOG_LEVEL=info
 ENV MCP_TRANSPORT=http
 ENV MCP_HTTP_PORT=8080
+# All interfaces inside the container. Startup still refuses to listen unless
+# CONDUIT_S2S_SECRET is a real secret (empty values and known placeholders
+# exit). MCP_ALLOW_INSECURE_DEV=1 forces 127.0.0.1 even when this is 0.0.0.0.
 ENV MCP_HTTP_HOST=0.0.0.0
+# Gateway mode reads the API key from X-CustomerThermometer-Api-Key only.
 ENV AUTH_MODE=gateway
 
 CMD ["node", "dist/http.js"]
